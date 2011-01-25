@@ -11,7 +11,7 @@
 #ifndef _OE_PROPERTY_BAR_H_
 #define _OE_PROPERTY_BAR_H_
 
-#include <Display/ITweakBar.h>
+#include <Utils/TweakBar.h>
 
 namespace OpenEngine {
 namespace Utils {
@@ -22,18 +22,20 @@ class PropertyTreeNode;
  *
  * @class PropertyBar PropertyBar.h ons/PropertyBar/Utils/PropertyBar.h
  */
-class PropertyBar : public Display::ITweakBar {
+class PropertyBar : public TweakBar
+                  , public TweakVarHandler<PropertyTreeNode> {
 private:
     PropertyTreeNode* node;
 public:
     PropertyBar(string name, PropertyTreeNode* node);
 
-    void AddFields(Display::AntTweakBar& m);
 
-    void AddNode(TwBar* twBar, list<string> group, string name, PropertyTreeNode* node);
+    void AddNode(string name, TweakGroup* group, PropertyTreeNode* node);
 
-    static void AntSetCallback(const void *value, void* ctx);
-    static void AntGetCallback(void *value, void* ctx);
+    void SetTweakVar(const void* value, PropertyTreeNode* context);
+    void GetTweakVar(void* value, PropertyTreeNode* context) ;
+
+
 };
 } // NS Utils
 } // NS OpenEngine
