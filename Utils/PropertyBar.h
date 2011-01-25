@@ -24,13 +24,16 @@ class PropertyTreeNode;
  */
 class PropertyBar : public Display::ITweakBar {
 private:
-
+    PropertyTreeNode* node;
 public:
-    PropertyBar(string name, PropertyTreeNode* node) : ITweakBar(name) {
-
-    }
+    PropertyBar(string name, PropertyTreeNode* node);
 
     void AddFields(Display::AntTweakBar& m);
+
+    void AddNode(TwBar* twBar, list<string> group, string name, PropertyTreeNode* node);
+
+    static void AntSetCallback(const void *value, void* ctx);
+    static void AntGetCallback(void *value, void* ctx);
 };
 } // NS Utils
 } // NS OpenEngine
