@@ -38,7 +38,7 @@ private:
         set<PropertyTreeNode*> nodes;
         PropertyBar* bar;
     public:
-        PropertyBarGroup(string name, PropertyTreeNode* node, PropertyBar* bar);
+        PropertyBarGroup(string name, string label, PropertyTreeNode* node, PropertyBar* bar);
         void AddNode(PropertyTreeNode* n);
         void Handle(PropertiesChangedEventArg arg);
     };

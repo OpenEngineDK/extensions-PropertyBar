@@ -40,14 +40,21 @@ void PropertyBar::AddButtons() {
         new TweakButton<PropertyTree>("save", 
                                       node->GetTree(),
                                       &PropertyTree::Save);
+
+    TweakButton<PropertyTree> *btnC = 
+        new TweakButton<PropertyTree>("save (comments)", 
+                                      node->GetTree(),
+                                      &PropertyTree::SaveWithComments);
+    
     AddItem(btn);
+    AddItem(btnC);
 }
 
  void PropertyBar::AddNode(string name, PropertyBarGroup* group, PropertyTreeNode* node) {
     if (node->kind == PropertyTreeNode::MAP) {
         PropertyBarGroup *g2 = NULL;
         if (name.compare("") != 0) {
-            g2 = new PropertyBarGroup(name, node, this);
+            g2 = new PropertyBarGroup(node->GetNodePath(),name, node, this);
             if (group) {
                 group->AddItem(g2);
                 group->AddNode(node);
@@ -65,7 +72,7 @@ void PropertyBar::AddButtons() {
     } else if (node->kind == PropertyTreeNode::ARRAY) {
         PropertyBarGroup *g2 = NULL;
         if (name.compare("") != 0) {
-            g2 = new PropertyBarGroup(name, node, this);
+            g2 = new PropertyBarGroup(node->GetNodePath(), name, node, this);
             if (group) {
                 group->AddItem(g2);
                 group->AddNode(node);
@@ -78,6 +85,9 @@ void PropertyBar::AddButtons() {
              itr != node->subNodesArray.end();
              itr++) {
             string key = Convert::ToString(i++);
+
+            logger.error << "array, add " << (*itr)->GetNodePath() 
+                         << " to " << g2->GetName() << logger.end;
             AddNode(key, g2, *itr);
         }                
     } else if (node->kind == PropertyTreeNode::SCALAR) {
@@ -131,9 +141,10 @@ void PropertyBar::PropertyBarVar::Handle(PropertiesChangedEventArg arg) {
 }
 
 PropertyBar::PropertyBarGroup::PropertyBarGroup(string na,
+                                                string la,
                                                 PropertyTreeNode* n,
                                                 PropertyBar* bar) 
-: TweakGroup(na), node(n), bar(bar) {
+: TweakGroup(na, la), node(n), bar(bar) {
     node->PropertiesChangedEvent().Attach(*this);
 }
 
