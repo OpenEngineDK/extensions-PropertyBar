@@ -30,6 +30,7 @@ class PropertyTree;
 class PropertyBar : public TweakBar {
 private:
     PropertyTreeNode* node;
+    PropertyTreeNode* metaNode;
     bool isTree;
 
     class PropertyBarGroup : public TweakGroup
@@ -46,18 +47,23 @@ private:
     class PropertyBarVar : public TweakVar
                          , public Core::IListener<PropertiesChangedEventArg> {
         PropertyTreeNode* node;
+        PropertyTreeNode* metaNode;        
     public:
         PropertyBarVar(string name, string label, TweakVar::Type t, PropertyTreeNode* node);
         void GetValue(void* value);
         void SetValue(const void* value);
         void Handle(PropertiesChangedEventArg arg);
-    };
+        void SetMetaNode(PropertyTreeNode* mn);
+        void RefreshMeta();
+    };    
 
     void AddNode(string name, PropertyBarGroup* group, PropertyTreeNode* node);
     void AddButtons();
 public:
     PropertyBar(string name, PropertyTree* tree);
+    PropertyBar(string name, PropertyTree* tree, PropertyTreeNode* metaNode);
     PropertyBar(string name, PropertyTreeNode* node);
+    PropertyBar(string name, PropertyTreeNode* node, PropertyTreeNode* metaNode);
 
 
     
