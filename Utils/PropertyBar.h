@@ -32,6 +32,17 @@ private:
     PropertyTreeNode* node;
     bool isTree;
 
+    class PropertyBarGroup : public TweakGroup
+                           , public Core::IListener<PropertiesChangedEventArg> {
+        PropertyTreeNode* node;
+        set<PropertyTreeNode*> nodes;
+        PropertyBar* bar;
+    public:
+        PropertyBarGroup(string name, PropertyTreeNode* node, PropertyBar* bar);
+        void AddNode(PropertyTreeNode* n);
+        void Handle(PropertiesChangedEventArg arg);
+    };
+
     class PropertyBarVar : public TweakVar
                          , public Core::IListener<PropertiesChangedEventArg> {
         PropertyTreeNode* node;
@@ -42,7 +53,7 @@ private:
         void Handle(PropertiesChangedEventArg arg);
     };
 
-    void AddNode(string name, TweakGroup* group, PropertyTreeNode* node);
+    void AddNode(string name, PropertyBarGroup* group, PropertyTreeNode* node);
     void AddButtons();
 public:
     PropertyBar(string name, PropertyTree* tree);
