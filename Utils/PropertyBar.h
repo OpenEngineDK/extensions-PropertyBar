@@ -12,28 +12,46 @@
 #define _OE_PROPERTY_BAR_H_
 
 #include <Utils/TweakBar.h>
+#include <Utils/TweakVar.h>
+#include <Core/IListener.h>
+#include <Utils/PropertyTree.h>
 
 namespace OpenEngine {
 namespace Utils {
 
 class PropertyTreeNode;
+class PropertyTree;
+
 /**
  * Short description.
  *
  * @class PropertyBar PropertyBar.h ons/PropertyBar/Utils/PropertyBar.h
  */
-class PropertyBar : public TweakBar
-                  , public TweakVarHandler<PropertyTreeNode> {
+class PropertyBar : public TweakBar {
 private:
     PropertyTreeNode* node;
+    bool isTree;
+
+    class PropertyBarVar : public TweakVar
+                         , public Core::IListener<PropertiesChangedEventArg> {
+        PropertyTreeNode* node;
+    public:
+        PropertyBarVar(string name, string label, TweakVar::Type t, PropertyTreeNode* node);
+        void GetValue(void* value);
+        void SetValue(const void* value);
+        void Handle(PropertiesChangedEventArg arg);
+    };
+
+    void AddNode(string name, TweakGroup* group, PropertyTreeNode* node);
+    void AddButtons();
 public:
+    PropertyBar(string name, PropertyTree* tree);
     PropertyBar(string name, PropertyTreeNode* node);
 
 
-    void AddNode(string name, TweakGroup* group, PropertyTreeNode* node);
+    
 
-    void SetTweakVar(const void* value, PropertyTreeNode* context);
-    void GetTweakVar(void* value, PropertyTreeNode* context) ;
+;
 
 
 };
