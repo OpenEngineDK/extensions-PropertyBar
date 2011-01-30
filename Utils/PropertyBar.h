@@ -27,9 +27,10 @@ class PropertyTree;
  *
  * @class PropertyBar PropertyBar.h ons/PropertyBar/Utils/PropertyBar.h
  */
-class PropertyBar : public TweakBar {
+class PropertyBar : public TweakBar, Core::IListener<PropertiesChangedEventArg> {
 private:
     PropertyTreeNode* node;
+    set<PropertyTreeNode*> rootNodes;
     PropertyTreeNode* metaNode;
     bool isTree;
 
@@ -65,11 +66,7 @@ public:
     PropertyBar(string name, PropertyTreeNode* node);
     PropertyBar(string name, PropertyTreeNode* node, PropertyTreeNode* metaNode);
 
-
-    
-
-;
-
+    void Handle(PropertiesChangedEventArg arg); 
 
 };
 } // NS Utils

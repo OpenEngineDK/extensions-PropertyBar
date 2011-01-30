@@ -20,7 +20,8 @@ PropertyBar::PropertyBar(string name, PropertyTreeNode* node) : TweakBar(name)
     , node(node)
     , metaNode(NULL)
     , isTree(false) {
-    SetIconify(false);       
+    SetIconify(false);    
+    node->PropertiesChangedEvent().Attach(*this);   
     AddNode("",NULL,node);
 }
 PropertyBar::PropertyBar(string name, PropertyTreeNode* node, PropertyTreeNode* mn)
@@ -29,6 +30,7 @@ PropertyBar::PropertyBar(string name, PropertyTreeNode* node, PropertyTreeNode* 
     , metaNode(mn)
     , isTree(false) {
     SetIconify(false);        
+    node->PropertiesChangedEvent().Attach(*this);
     AddNode("",NULL,node);
 }
 
@@ -37,6 +39,7 @@ PropertyBar::PropertyBar(string name, PropertyTree* tree) : TweakBar(name)
     , metaNode(NULL)
     , isTree(true) {
     SetIconify(false);    
+    node->PropertiesChangedEvent().Attach(*this);
     AddNode("",NULL,node);
     AddButtons();
 }
@@ -46,6 +49,7 @@ PropertyBar::PropertyBar(string name, PropertyTree* tree, PropertyTreeNode* meta
     , metaNode(metaNode)
     , isTree(true) {
     SetIconify(false);
+    node->PropertiesChangedEvent().Attach(*this);
     AddNode("",NULL,node);
     AddButtons();
 }
@@ -76,8 +80,10 @@ void PropertyBar::AddButtons() {
                 group->AddItem(g2);
                 group->AddNode(node);
             }
-            else 
-                AddItem(g2);
+            else {
+                AddItem(g2);            
+                rootNodes.insert(node);
+            }
         }
         for (map<string,PropertyTreeNode*>::iterator itr = node->subNodes.begin();
              itr != node->subNodes.end();
@@ -95,8 +101,10 @@ void PropertyBar::AddButtons() {
                 group->AddItem(g2);
                 group->AddNode(node);
             }
-            else
+            else {
                 AddItem(g2);
+                rootNodes.insert(node);
+            }
         }
         int i = 0;
         for (vector<PropertyTreeNode*>::iterator itr = node->subNodesArray.begin();
@@ -125,11 +133,43 @@ void PropertyBar::AddButtons() {
             group->AddItem(v);
             group->AddNode(node);            
         }
-        else 
+        else {
             AddItem(v);
-
+            rootNodes.insert(node);
+        }
     } 
 }
+
+void PropertyBar::Handle(PropertiesChangedEventArg arg) {
+    if (!arg.IsRecursive()) {
+        PropertyTreeNode* node = arg.GetNode();
+        if (node->IsMap()) {
+            for (map<string,PropertyTreeNode*>::iterator itr = node->subNodes.begin();
+                 itr != node->subNodes.end();
+                 itr++) {
+                string key = itr->first;
+                PropertyTreeNode* n = itr->second;
+                if (rootNodes.count(n) == 0) {
+                    AddNode(key, NULL, n);
+                }
+            }
+        } else if (node->IsArray()) {
+            int i=0;
+            for (vector<PropertyTreeNode*>::iterator itr = node->subNodesArray.begin();
+                 itr != node->subNodesArray.end();
+                 itr++) {
+                PropertyTreeNode* n = *itr;
+                string key = Convert::ToString(i++);
+                if (rootNodes.count(n) == 0) {
+                    AddNode(key, NULL, n);
+                }
+            }
+
+        }
+        
+    }
+}
+
 
 PropertyBar::PropertyBarVar::PropertyBarVar(string na, string l, TweakVar::Type t, PropertyTreeNode* n)
 : TweakVar(na,l,t)
@@ -209,6 +249,7 @@ void PropertyBar::PropertyBarGroup::AddNode(PropertyTreeNode* n) {
 }
 
 void PropertyBar::PropertyBarGroup::Handle(PropertiesChangedEventArg arg) {
+    
     if (arg.IsStructureChange() && arg.GetNode() == node) {
         if (node->IsMap()) {
             for (map<string,PropertyTreeNode*>::iterator itr = node->subNodes.begin();
