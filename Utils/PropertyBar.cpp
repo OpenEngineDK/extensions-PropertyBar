@@ -110,6 +110,8 @@ void PropertyBar::AddButtons() {
         TweakVar::Type type = TweakVar::STDSTRING;
         if (node->GetType() == PropertyTree::FLOAT) {
             type = TweakVar::FLOAT;
+        } else if (node->GetType() == PropertyTree::UINT32) {
+            type = TweakVar::UINT32;
         }
         PropertyBarVar* v = new PropertyBarVar(n, name, type, node);
         if (metaNode && metaNode->HaveNodePath(n)) {
@@ -154,8 +156,9 @@ void PropertyBar::PropertyBarVar::RefreshMeta() {
 
 void PropertyBar::PropertyBarVar::GetValue(void* value) {
     if (GetType() == FLOAT) {
-        
         *((float*)value) = node->Get<float>(0.0);
+    } else if (GetType() == UINT32) {
+        *((unsigned int*)value) = node->Get<unsigned int>(0);
     } else { 
         std::string *destPtr = static_cast<std::string *>(value);
         string val = node->value;
@@ -166,6 +169,8 @@ void PropertyBar::PropertyBarVar::GetValue(void* value) {
 void PropertyBar::PropertyBarVar::SetValue(const void* value) {
     if (GetType() == FLOAT) {
         node->Set<float>(*(float*)value);
+    } else if (GetType() == UINT32) {
+        node->Set<unsigned int>(*(unsigned int*)value);
     } else {
         const std::string *srcPtr = static_cast<const std::string *>(value);        
         node->SetValue(*srcPtr);
@@ -176,6 +181,8 @@ void PropertyBar::PropertyBarVar::Handle(PropertiesChangedEventArg arg) {
     if (arg.IsTypeChange() && arg.GetNode() == node) {
         if (arg.GetNode()->GetType() == PropertyTree::FLOAT)
             SetType(TweakVar::FLOAT);
+        if (arg.GetNode()->GetType() == PropertyTree::UINT32)
+            SetType(TweakVar::UINT32);
     } else if (arg.IsValueChange() && arg.GetNode() == metaNode) {
         RefreshMeta();
     }
