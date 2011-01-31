@@ -34,6 +34,8 @@ private:
     PropertyTreeNode* metaNode;
     bool isTree;
 
+    static TweakVar::Type NodeTypeToTweakType(PropertyTree::PropertyType t);
+
     class PropertyBarGroup : public TweakGroup
                            , public Core::IListener<PropertiesChangedEventArg> {
         PropertyTreeNode* node;

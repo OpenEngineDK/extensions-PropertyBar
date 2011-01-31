@@ -17,6 +17,18 @@
 namespace OpenEngine {
 namespace Utils {
     
+TweakVar::Type PropertyBar::NodeTypeToTweakType(PropertyTree::PropertyType t) {
+    switch (t) {
+    case PropertyTree::FLOAT: return TweakVar::FLOAT;
+    case PropertyTree::UINT32: return TweakVar::UINT32;
+    case PropertyTree::INT32: return TweakVar::INT32;
+    case PropertyTree::BOOL: return TweakVar::BOOL;
+    case PropertyTree::RGBACOLOR: return TweakVar::COLOR4F;
+    default: return TweakVar::STDSTRING;
+    }
+}
+
+
 PropertyBar::PropertyBar(string name, PropertyTreeNode* node) : TweakBar(name)
     , node(node)
     , metaNode(NULL)
@@ -116,16 +128,9 @@ void PropertyBar::AddButtons() {
         }                
     } else if (node->kind == PropertyTreeNode::SCALAR) {
         string n = node->nodePath;
-        TweakVar::Type type = TweakVar::STDSTRING;
-        if (node->GetType() == PropertyTree::FLOAT) {
-            type = TweakVar::FLOAT;
-        } else if (node->GetType() == PropertyTree::UINT32) {
-            type = TweakVar::UINT32;
-        } else if (node->GetType() == PropertyTree::BOOL) {
-            type = TweakVar::BOOL;
-        } else if (node->GetType() == PropertyTree::RGBACOLOR) {
-            type = TweakVar::COLOR4F;
-        }
+
+        TweakVar::Type type = NodeTypeToTweakType(node->GetType());
+
         PropertyBarVar* v = new PropertyBarVar(n, name, type, node);
         if (metaNode && metaNode->HaveNodePath(n)) {
                 PropertyTreeNode* mn = metaNode->GetNodePath(n);
@@ -245,14 +250,7 @@ void PropertyBar::PropertyBarVar::SetValue(const void* value) {
 
 void PropertyBar::PropertyBarVar::Handle(PropertiesChangedEventArg arg) {
     if (arg.IsTypeChange() && arg.GetNode() == node) {
-        if (arg.GetNode()->GetType() == PropertyTree::FLOAT)
-            SetType(TweakVar::FLOAT);
-        else if (arg.GetNode()->GetType() == PropertyTree::UINT32)
-            SetType(TweakVar::UINT32);
-        else if (arg.GetNode()->GetType() == PropertyTree::BOOL)
-            SetType(TweakVar::BOOL);
-        else if (arg.GetNode()->GetType() == PropertyTree::RGBACOLOR)
-            SetType(TweakVar::COLOR4F);
+        SetType(NodeTypeToTweakType(arg.GetNode()->GetType()));
 
     } else if (arg.IsValueChange() && arg.GetNode() == metaNode) {
         RefreshMeta();
