@@ -1,6 +1,6 @@
 # dist file for PropertyBar
-dist /extensions/AntTweakBar/AntTweakBar.dist http://openengine.dk/code/extensions/AntTweakBar/AntTweakBar.dist
-dist /extensions/PropertyTree/PropertyTree.dist http://openengine.dk/code/extensions/PropertyTree/PropertyTree.dist
+dist /extensions/AntTweakBar/AntTweakBar.dist https://raw.githubusercontent.com/OpenEngineDK/extensions-AntTweakBar/master/AntTweakBar.dist
+dist /extensions/PropertyTree/PropertyTree.dist https://raw.githubusercontent.com/OpenEngineDK/extensions-PropertyTree/master/PropertyTree.dist
 
-darcs      /extensions/PropertyBar            http://openengine.dk/code/extensions/PropertyBar
-darcs-dev  /extensions/PropertyBar            fh.daimi.au.dk:/users/cgd/code/extensions/PropertyBar
+git      /extensions/PropertyBar            https://github.com/OpenEngineDK/extensions-PropertyBar.git
+git-dev  /extensions/PropertyBar            git@github.com:OpenEngineDK/extensions-PropertyBar.git
